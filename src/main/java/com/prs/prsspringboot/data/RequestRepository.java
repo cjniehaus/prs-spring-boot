@@ -10,5 +10,6 @@ import com.prs.prsspringboot.business.User;
 public interface RequestRepository extends CrudRepository<Request, Integer> {
 
 	List<Request> findByUser(User user);
+	List<Request> findByStatusAndUserNot(String status, User user);
 	
 }

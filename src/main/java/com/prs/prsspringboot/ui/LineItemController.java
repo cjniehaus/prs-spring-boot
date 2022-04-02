@@ -95,18 +95,22 @@ public class LineItemController {
 	
 	@CrossOrigin
 	@DeleteMapping("/{id}")
-	public boolean deleteLineItem(@PathVariable("id") int id, @RequestBody LineItem lineItem) {
+	public List<LineItem> deleteLineItem(@PathVariable("id") int id) {
+		List<LineItem> lineItems = new ArrayList<LineItem>();
 		
 		if (itemRepo.existsById(id)) {
 			try {
-				itemRepo.deleteById(id);
-				recalculateTotal(lineItem.getRequest());
-				return true;
+				Optional<LineItem> result = itemRepo.findById(id);
+				if (result.isPresent()) {
+					lineItems.add(result.get());
+					itemRepo.deleteById(id);
+					recalculateTotal(result.get().getRequest());
+				}
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
 		}
-		return false;
+		return lineItems;
 	}
 	
 	private void recalculateTotal(Request request) {

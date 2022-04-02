@@ -17,6 +17,12 @@ import com.prs.prsspringboot.data.RequestRepository;;
 @RequestMapping("/requests")
 public class RequestController {
 	
+	private final String NEW = "New";
+	private final String REVIEW = "Review";
+	private final String APPROVED = "Approved";
+	private final String REJECTED = "Rejected";
+	private final String REOPENED = "Reopened";
+	
 	@Autowired
 	private RequestRepository requestRepo;
 	
@@ -47,6 +53,20 @@ public class RequestController {
 		return requests;
 	}
 	
+	@CrossOrigin
+	@PutMapping("/review")
+	public List<Request> getAllForReview(@RequestBody User user) {
+		List<Request> requests = new ArrayList<Request>();
+		
+		try {
+			requests = requestRepo.findByStatusAndUserNot(REVIEW, user);
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		
+		return requests;
+	}
+	
 	@GetMapping("/{id}")
 	public List<Request> getRequestById(@PathVariable int id) {
 		List<Request> requests = new ArrayList<Request>();
@@ -66,7 +86,7 @@ public class RequestController {
 		List<Request> requests = new ArrayList<Request>();
 		
 		request.setSubmittedDate(LocalDateTime.now());
-		request.setStatus("New");
+		request.setStatus(NEW);
 		
 		try {
 			requests.add(requestRepo.save(request));
@@ -106,5 +126,80 @@ public class RequestController {
 		}
 		return false;
 	}
+	
+	@CrossOrigin
+	@PostMapping("/status-review/{id}")
+	public List<Request> setStatusReview(@PathVariable("id") int id, @RequestBody Request request) {
+		List<Request> requests = new ArrayList<Request>();
+		
+		request.setStatus(REVIEW);
+		
+		if (requestRepo.existsById(id)) {
+			try {
+				requests.add(requestRepo.save(request));
+			} catch (DataIntegrityViolationException dive) {
+				System.out.println(dive.getMessage());
+			}
+		}
+		
+		return requests;
+	}
+	
+	@CrossOrigin
+	@PostMapping("/status-approved/{id}")
+	public List<Request> setStatusApproved(@PathVariable("id") int id, @RequestBody Request request) {
+		List<Request> requests = new ArrayList<Request>();
+		
+		request.setStatus(APPROVED);
+		
+		if (requestRepo.existsById(id)) {
+			try {
+				requests.add(requestRepo.save(request));
+			} catch (DataIntegrityViolationException dive) {
+				System.out.println(dive.getMessage());
+			}
+		}
+		
+		return requests;
+	}
+	
+	
+	@CrossOrigin
+	@PostMapping("/status-rejected/{id}")
+	public List<Request> setStatusRejected(@PathVariable("id") int id, @RequestBody Request request) {
+		List<Request> requests = new ArrayList<Request>();
+		
+		request.setStatus(REJECTED);
+		
+		if (requestRepo.existsById(id)) {
+			try {
+				requests.add(requestRepo.save(request));
+			} catch (DataIntegrityViolationException dive) {
+				System.out.println(dive.getMessage());
+			}
+		}
+		
+		return requests;
+	}
+	
+	
+	@CrossOrigin
+	@PostMapping("/status-reopened/{id}")
+	public List<Request> setStatusReopened(@PathVariable("id") int id, @RequestBody Request request) {
+		List<Request> requests = new ArrayList<Request>();
+		
+		request.setStatus(REOPENED);
+		
+		if (requestRepo.existsById(id)) {
+			try {
+				requests.add(requestRepo.save(request));
+			} catch (DataIntegrityViolationException dive) {
+				System.out.println(dive.getMessage());
+			}
+		}
+		
+		return requests;
+	}
+	
 
 }
